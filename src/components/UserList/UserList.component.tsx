@@ -14,7 +14,8 @@ const UserList: React.FC<UserListProps> = ({ users }) => {
       styles={{
         flexDirection: "column",
         justifyContent: "center",
-        maxWidth: "500px",
+        maxWidth: "900px",
+        width: "calc(100% - 24px)",
       }}
     >
       <Flex styles={{ flexDirection: "column", justifyContent: "center" }}>

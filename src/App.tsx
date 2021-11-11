@@ -10,12 +10,18 @@ import GlobalStyles from "components/styles/Global.styled";
 
 const theme = {
   colors: {
-    lightGrey: "rgba(34,36,38,.15)",
-    mainBlack: "#101010",
+    lightTextColor: "#999",
+    textColor: "#111827",
+    purple: "#6159E9",
+    lightGrey: "#F9FAFB",
+    darkGrey: "#F2F3F5",
+    white: "#fff",
     mainBlue: "#0075FF",
   },
-  boxShadow: "4px 4px 0 0 rgb(34 36 38 / 15%)",
+  boxShadow: "10px 10px 10px rgb(34 36 38 / 8%)",
   borderRadius: "8px",
+  fontSize: "14px",
+  titleFontSize: "24px",
 } as ThemeModel;
 
 function App() {

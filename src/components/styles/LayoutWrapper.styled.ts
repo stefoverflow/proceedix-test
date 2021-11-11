@@ -1,7 +1,13 @@
 import styled from "styled-components";
 
-const LayoutWrapper = styled.div`
-  background-color: whitesmoke;
+import ThemeModel from "models/Theme";
+
+const LayoutWrapper = styled.div<{ theme: ThemeModel }>`
+  background-color: ${({
+    theme: {
+      colors: { darkGrey },
+    },
+  }) => darkGrey};
 
   min-height: 100vh;
 

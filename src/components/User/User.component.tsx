@@ -1,7 +1,7 @@
 import React, { useMemo } from "react";
 import styled from "styled-components";
 
-import { Flex } from "components/styles";
+import { Flex, Label } from "components/styles";
 import TaskList from "components/TaskList";
 
 import ThemeModel from "models/Theme";
@@ -12,58 +12,122 @@ type UserProps = {
   user: UserModel;
 };
 
-const UserContainer = styled.div<{ theme: ThemeModel }>`
-  width: 100%;
-  margin: 20px 0;
+const Container = styled.div<{ theme: ThemeModel }>`
+  width: calc(100% - 24px);
+  margin: 40px 12px;
 
-  border: 1px solid
-    ${({
-      theme: {
-        colors: { mainBlack },
-      },
-    }) => mainBlack};
   border-radius: 8px;
   box-shadow: ${({ theme: { boxShadow } }) => boxShadow};
 `;
 
-const UserRow = styled(Flex)<{ theme: ThemeModel }>`
-  width: 100%;
-  border-bottom: 1px solid
+const InformationContainer = styled(Flex)<{ theme: ThemeModel }>`
+  padding: 32px;
+  border-radius: 8px 8px 0 0;
+  display: flex;
+
+  background-color: ${({
+    theme: {
+      colors: { lightGrey },
+    },
+  }) => lightGrey};
+
+  @media (max-width: 550px) {
+    flex-wrap: wrap;
+  }
+`;
+
+const TasksContainer = styled(Flex)<{ theme: ThemeModel }>`
+  padding: 32px;
+  border-radius: 0 0 8px 8px;
+
+  background-color: ${({
+    theme: {
+      colors: { white },
+    },
+  }) => white};
+`;
+
+const Title = styled.div<{ theme: ThemeModel }>`
+  color: ${({
+    theme: {
+      colors: { textColor },
+    },
+  }) => textColor};
+  font-size: ${({ theme: { titleFontSize } }) => titleFontSize};
+  font-weight: bold;
+`;
+
+const Information = styled.div`
+  margin-top: 20px;
+`;
+
+const NameLabel = styled(Label)`
+  width: 120px;
+`;
+
+const Field = styled(Label)`
+  font-weight: bold;
+  color: ${({
+    theme: {
+      colors: { textColor },
+    },
+  }) => textColor};
+`;
+
+const NameField = styled(Field)`
+  width: 120px;
+  color: ${({
+    theme: {
+      colors: { textColor },
+    },
+  }) => textColor};
+`;
+
+const AverageScoreNotSelectedContainer = styled(Flex)<{ theme: ThemeModel }>`
+  padding: 12px;
+  font-size: ${({ theme: { fontSize } }) => fontSize};
+  color: ${({
+    theme: {
+      colors: { mainBlue },
+    },
+  }) => mainBlue};
+  text-align: center;
+  border: 1px solid
     ${({
       theme: {
-        colors: { mainBlack },
+        colors: { mainBlue },
       },
-    }) => mainBlack};
+    }) => mainBlue};
+  border-radius: 8px;
+  background-color: ${({
+    theme: {
+      colors: { mainBlue },
+    },
+  }) => `${mainBlue}1A`};
 `;
 
-const UserHeader = styled.div<{ theme: ThemeModel }>`
-  width: 100px;
-
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  padding: 8px;
-
+const AverageScore = styled.div<{ theme: ThemeModel }>`
+  font-size: 42px;
   font-weight: bold;
 
-  border-right: 1px solid
-    ${({
-      theme: {
-        colors: { mainBlack },
-      },
-    }) => mainBlack};
+  text-align: center;
+
+  color: ${({
+    theme: {
+      colors: { mainBlue },
+    },
+  }) => mainBlue};
 `;
 
-const UserField = styled(UserHeader)`
-  font-weight: normal;
-  border: 0;
-`;
+const AverageScoreLabel = styled.div<{ theme: ThemeModel }>`
+  font-size: ${({ theme: { fontSize } }) => fontSize};
+  text-align: center;
 
-const TasksTitle = styled.div`
-  margin: 0;
-  padding: 8px;
-
-  font-weight: bold;
+  color: ${({
+    theme: {
+      colors: { lightTextColor },
+    },
+  }) => lightTextColor};
 `;
 
 const User: React.FC<UserProps> = ({ user }) => {
@@ -79,39 +143,113 @@ const User: React.FC<UserProps> = ({ user }) => {
     [averageScore, age]
   );
 
+  // ========== TODO: ref sum and number calculations into one reduce function (accumultor should be object of sum and count) ==========
+
+  // const sumOfSelectedTasks = useMemo(
+  //   () =>
+  //     tasks.reduce(
+  //       (acc: AccType, t: TaskModel) => {
+  //         // (t.selected ?
+  //         //   {
+  //         //     acc.sum += t.score;
+  //         //     return acc;
+  //         //   } : acc
+  //       },
+  //       { sum: 0, count: 0 }
+  //     ),
+  //   [tasks]
+  // );
+  const sumOfSelectedTasks = useMemo(
+    () =>
+      tasks.reduce(
+        (acc: number, t: TaskModel) => (t.selected ? (acc += t.score) : acc),
+        0
+      ),
+    [tasks]
+  );
+
+  const numberOfSelectedTasks = useMemo(
+    () =>
+      tasks.reduce(
+        (acc: number, t: TaskModel) => (t.selected ? (acc += 1) : acc),
+        0
+      ),
+    [tasks]
+  );
+  const averageOfSelectedTasks = useMemo(
+    () => (sumOfSelectedTasks ? sumOfSelectedTasks / numberOfSelectedTasks : 0),
+    [sumOfSelectedTasks, numberOfSelectedTasks]
+  );
+
   return (
-    <UserContainer>
-      <Flex
-        styles={{ flexDirection: "column", justifyContent: "space-between" }}
+    <Container>
+      <InformationContainer
+        styles={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
       >
-        <UserRow
-          styles={{ flexDirection: "row", justifyContent: "flex-start" }}
+        <Flex
+          styles={{ flexDirection: "column", justifyContent: "space-between" }}
         >
-          <UserHeader>First Name</UserHeader>
-          <UserField>{firstName}</UserField>
-        </UserRow>
-        <UserRow
-          styles={{ flexDirection: "row", justifyContent: "flex-start" }}
+          <Title>Information</Title>
+          <Information>
+            <Flex
+              styles={{ flexDirection: "row", justifyContent: "flex-start" }}
+            >
+              <NameLabel>Name</NameLabel>
+              <Label>Age</Label>
+              <Label>Is great?</Label>
+            </Flex>
+            <Flex
+              styles={{ flexDirection: "row", justifyContent: "flex-start" }}
+            >
+              <NameField>
+                {firstName} {lastName}
+              </NameField>
+              <Field>{age}</Field>
+              <Field>{showGreatMessage && "Great!"}</Field>
+            </Flex>
+          </Information>
+        </Flex>
+        <Flex
+          styles={{
+            flexDirection: "column",
+            justifyContent: "center",
+            alignItems: "center",
+            flexBasis: "21%",
+          }}
         >
-          <UserHeader>Last Name</UserHeader>
-          <UserField>{lastName}</UserField>
-        </UserRow>
-        <UserRow
-          styles={{ flexDirection: "row", justifyContent: "flex-start" }}
-        >
-          <UserHeader>Age</UserHeader>
-          <UserField>{age}</UserField>
-        </UserRow>
-        <UserRow
-          styles={{ flexDirection: "row", justifyContent: "flex-start" }}
-        >
-          <UserHeader>Is great?</UserHeader>
-          {showGreatMessage && <UserField>Great!</UserField>}
-        </UserRow>
-        <TasksTitle>Tasks </TasksTitle>
+          {averageOfSelectedTasks ? (
+            <>
+              <AverageScore>{averageOfSelectedTasks.toFixed(2)}</AverageScore>
+              <AverageScoreLabel>Average of selected</AverageScoreLabel>
+            </>
+          ) : (
+            <AverageScoreNotSelectedContainer
+              styles={{
+                flexDirection: "row",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              Check minimum 1 task to get score.
+            </AverageScoreNotSelectedContainer>
+          )}
+        </Flex>
+      </InformationContainer>
+      <TasksContainer
+        styles={{
+          flexDirection: "column",
+          justifyContent: "flex-start",
+          alignItems: "flex-start",
+        }}
+      >
+        <Title>Tasks</Title>
         <TaskList tasks={tasks} />
-      </Flex>
-    </UserContainer>
+      </TasksContainer>
+    </Container>
   );
 };
 

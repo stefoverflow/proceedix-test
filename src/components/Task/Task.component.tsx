@@ -1,53 +1,72 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { ChevronDown, ChevronUp } from "react-bootstrap-icons";
 
-import { Flex } from "components/styles";
+import { Flex, Label } from "components/styles";
 
 import ThemeModel from "models/Theme";
 import TaskModel from "models/Task";
 
 const TaskContainer = styled(Flex)<{ theme: ThemeModel }>`
-  max-width: calc(100% - 24px);
-  margin: 12px;
+  margin: 12px 0;
+  padding: 20px;
 
-  border: 1px solid
-    ${({
-      theme: {
-        colors: { lightGrey },
-      },
-    }) => lightGrey};
+  font-size: ${({ theme: { fontSize } }) => fontSize};
+  color: ${({
+    theme: {
+      colors: { textColor },
+    },
+  }) => textColor};
+
+  background-color: ${({
+    theme: {
+      colors: { lightGrey },
+    },
+  }) => lightGrey};
   border-radius: 8px;
 `;
 
-const TaskRow = styled(Flex)<{ theme: ThemeModel }>`
-  width: 100%;
-  border-bottom: 1px solid
-    ${({
-      theme: {
-        colors: { lightGrey },
-      },
-    }) => lightGrey};
-
-  :last-child {
-    border: none;
-  }
+const Checkbox = styled.div`
+  margin-right: 8px;
 `;
 
-const TaskHeader = styled.div`
-  padding: 8px;
-
+const Field = styled(Label)`
   font-weight: bold;
+  width: 100%;
+  color: ${({
+    theme: {
+      colors: { textColor },
+    },
+  }) => textColor};
 `;
 
-const TaskField = styled(TaskHeader)<{ theme: ThemeModel }>`
-  border-left: 1px solid
-    ${({
-      theme: {
-        colors: { lightGrey },
-      },
-    }) => lightGrey};
+const ToggleButton = styled.button`
+  border: 0;
+  cursor: pointer;
+  color: ${({
+    theme: {
+      colors: { mainBlue },
+    },
+  }) => mainBlue};
+  font-size: 16px;
+  background-color: transparent;
+`;
 
-  font-weight: normal;
+const TaskDescriptionContainer = styled(Flex)`
+  padding-top: 20px;
+`;
+
+const DescriptionLabel = styled(Label)`
+  width: 80px;
+`;
+
+const DescriptionText = styled.div`
+  width: 100%;
+  color: ${({
+    theme: {
+      colors: { textColor },
+    },
+  }) => textColor};
 `;
 
 type TaskProps = {
@@ -58,36 +77,51 @@ type TaskProps = {
 
 const Task: React.FC<TaskProps> = ({ task, index, onSelect }) => {
   const { id, title, description, score, selected } = task;
+  const [showMore, setShowMore] = useState(false);
 
   return (
     <TaskContainer
       styles={{ flexDirection: "column", justifyContent: "space-between" }}
     >
-      <TaskRow styles={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <TaskHeader>{index}</TaskHeader>
-      </TaskRow>
-      <TaskRow styles={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <TaskHeader>Title</TaskHeader>
-        <TaskField>{title}</TaskField>
-      </TaskRow>
-      <TaskRow styles={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <TaskHeader>Description</TaskHeader>
-        <TaskField>{description}</TaskField>
-      </TaskRow>
-      <TaskRow styles={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <TaskHeader>Score</TaskHeader>
-        <TaskField>{score}</TaskField>
-      </TaskRow>
-      <TaskRow styles={{ flexDirection: "row", justifyContent: "flex-start" }}>
-        <TaskHeader>Select</TaskHeader>
-        <TaskField>
-          <input
-            type="checkbox"
-            checked={selected}
-            onChange={() => onSelect(id)}
-          />
-        </TaskField>
-      </TaskRow>
+      <Flex styles={{ flexDirection: "row", justifyContent: "space-between" }}>
+        <Flex styles={{ flexDirection: "row", justifyContent: "flex-start" }}>
+          <Checkbox>
+            <input
+              type="checkbox"
+              checked={selected}
+              onChange={() => onSelect(id)}
+            />
+          </Checkbox>
+          <Field>
+            {index + 1}. {title}
+          </Field>
+        </Flex>
+        <ToggleButton onClick={() => setShowMore(!showMore)}>
+          {!showMore ? <ChevronDown /> : <ChevronUp />}
+        </ToggleButton>
+      </Flex>
+      {showMore && (
+        <TaskDescriptionContainer
+          styles={{ flexDirection: "row", justifyContent: "flex-start" }}
+        >
+          <Flex
+            styles={{
+              flexDirection: "column",
+              justifyContent: "flex-start",
+              flexBasis: "10%",
+            }}
+          >
+            <Label>Score</Label>
+            <Field>{score}</Field>
+          </Flex>
+          <Flex
+            styles={{ flexDirection: "column", justifyContent: "flex-start" }}
+          >
+            <DescriptionLabel>Description</DescriptionLabel>
+            <DescriptionText>{description}</DescriptionText>
+          </Flex>
+        </TaskDescriptionContainer>
+      )}
     </TaskContainer>
   );
 };
