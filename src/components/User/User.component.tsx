@@ -8,6 +8,8 @@ import ThemeModel from "models/Theme";
 import UserModel from "models/User";
 import TaskModel from "models/Task";
 
+import { useAppSelector } from "hooks/store";
+
 type UserProps = {
   user: UserModel;
 };
@@ -132,6 +134,8 @@ const AverageScoreLabel = styled.div<{ theme: ThemeModel }>`
 
 const User: React.FC<UserProps> = ({ user }) => {
   const { firstName, lastName, age, tasks } = user;
+  const { selectedTasks } = useAppSelector((state) => state.usersPage);
+
   const averageScore = useMemo(
     () =>
       tasks.reduce((acc: number, t: TaskModel) => (acc += t.score), 0) /
@@ -143,42 +147,24 @@ const User: React.FC<UserProps> = ({ user }) => {
     [averageScore, age]
   );
 
-  // ========== TODO: ref sum and number calculations into one reduce function (accumultor should be object of sum and count) ==========
-
-  // const sumOfSelectedTasks = useMemo(
-  //   () =>
-  //     tasks.reduce(
-  //       (acc: AccType, t: TaskModel) => {
-  //         // (t.selected ?
-  //         //   {
-  //         //     acc.sum += t.score;
-  //         //     return acc;
-  //         //   } : acc
-  //       },
-  //       { sum: 0, count: 0 }
-  //     ),
-  //   [tasks]
-  // );
-  const sumOfSelectedTasks = useMemo(
+  const selectedTasksForThisUser = useMemo(
     () =>
-      tasks.reduce(
-        (acc: number, t: TaskModel) => (t.selected ? (acc += t.score) : acc),
-        0
+      tasks.filter((task: TaskModel) =>
+        selectedTasks.find(
+          (selectedTaskId: string) => selectedTaskId === task.id
+        )
       ),
-    [tasks]
-  );
-
-  const numberOfSelectedTasks = useMemo(
-    () =>
-      tasks.reduce(
-        (acc: number, t: TaskModel) => (t.selected ? (acc += 1) : acc),
-        0
-      ),
-    [tasks]
+    [tasks, selectedTasks]
   );
   const averageOfSelectedTasks = useMemo(
-    () => (sumOfSelectedTasks ? sumOfSelectedTasks / numberOfSelectedTasks : 0),
-    [sumOfSelectedTasks, numberOfSelectedTasks]
+    () =>
+      selectedTasksForThisUser
+        ? selectedTasksForThisUser.reduce(
+            (acc: number, t: TaskModel) => (acc += t.score),
+            0
+          ) / selectedTasksForThisUser.length
+        : 0,
+    [selectedTasksForThisUser]
   );
 
   return (

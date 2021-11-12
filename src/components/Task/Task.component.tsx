@@ -77,7 +77,7 @@ type TaskProps = {
 
 const Task: React.FC<TaskProps> = ({ task, index, onSelect }) => {
   const { id, title, description, score, selected } = task;
-  const [showMore, setShowMore] = useState(false);
+  const [showMore, setShowMore] = useState(true);
 
   return (
     <TaskContainer

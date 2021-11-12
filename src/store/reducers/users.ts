@@ -9,6 +9,7 @@ const initialState = {
   users: [],
   fetchInProgress: false,
   fetchError: null,
+  selectedTasks: [],
 } as UsersStateModel;
 
 const usersSlice = createSlice({
@@ -24,13 +25,7 @@ const usersSlice = createSlice({
 
       state.fetchInProgress = false;
       state.fetchError = null;
-
-      // Add 'selected' field for later use (initially nothing is selected)
-      const users = data.map((u) => ({
-        ...u,
-        tasks: u.tasks.map((t) => ({ ...t, selected: false })),
-      }));
-      state.users = users;
+      state.users = data;
     },
     fetchUsersError(state, action: PayloadAction<string>) {
       const errorMessage = action.payload;
@@ -41,13 +36,17 @@ const usersSlice = createSlice({
     // ========== TOGGLE TASK SELECTION ==========
     toggleSelectTask(state, action: PayloadAction<string>) {
       const id = action.payload;
-      const users = [...state.users];
+      const alreadySelected = state.selectedTasks.find(
+        (selectedTaskId: string) => selectedTaskId === id
+      );
 
-      const user = users.find((u) => u.tasks.find((t) => t.id === id));
-      const task = user.tasks.find((t) => t.id === id);
-      task.selected = !task.selected;
-
-      state.users = users;
+      if (alreadySelected) {
+        state.selectedTasks = state.selectedTasks.filter(
+          (selectedTaskId: string) => selectedTaskId !== id
+        );
+      } else {
+        state.selectedTasks = [...state.selectedTasks, id];
+      }
     },
   },
 });
