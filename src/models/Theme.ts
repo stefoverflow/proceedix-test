@@ -2,7 +2,6 @@ type Theme = {
   colors: {
     lightTextColor: string;
     textColor: string;
-    purple: string;
     lightGrey: string;
     darkGrey: string;
     white: string;

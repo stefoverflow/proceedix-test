@@ -12,7 +12,6 @@ const theme = {
   colors: {
     lightTextColor: "#999",
     textColor: "#111827",
-    purple: "#6159E9",
     lightGrey: "#F9FAFB",
     darkGrey: "#F2F3F5",
     white: "#fff",

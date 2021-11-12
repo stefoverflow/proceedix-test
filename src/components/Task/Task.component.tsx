@@ -30,7 +30,7 @@ const Checkbox = styled.div`
   margin-right: 8px;
 `;
 
-const Field = styled(Label)`
+const Field = styled(Label)<{ theme: ThemeModel }>`
   font-weight: bold;
   width: 100%;
   color: ${({
@@ -40,7 +40,7 @@ const Field = styled(Label)`
   }) => textColor};
 `;
 
-const ToggleButton = styled.button`
+const ToggleButton = styled.button<{ theme: ThemeModel }>`
   border: 0;
   cursor: pointer;
   color: ${({
@@ -60,7 +60,7 @@ const DescriptionLabel = styled(Label)`
   width: 80px;
 `;
 
-const DescriptionText = styled.div`
+const DescriptionText = styled.div<{ theme: ThemeModel }>`
   width: 100%;
   color: ${({
     theme: {
@@ -72,12 +72,12 @@ const DescriptionText = styled.div`
 type TaskProps = {
   task: TaskModel;
   index: number;
-  onSelect: any;
+  onSelect: (id: string) => void;
 };
 
 const Task: React.FC<TaskProps> = ({ task, index, onSelect }) => {
   const { id, title, description, score, selected } = task;
-  const [showMore, setShowMore] = useState(true);
+  const [showMore, setShowMore] = useState(false);
 
   return (
     <TaskContainer

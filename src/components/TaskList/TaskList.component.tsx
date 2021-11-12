@@ -12,11 +12,6 @@ type TaskListProps = {
   tasks: TaskModel[];
 };
 
-// type AccType = {
-//   sum: number;
-//   count: number;
-// };
-
 const TaskList: React.FC<TaskListProps> = ({ tasks }) => {
   const dispatch = useAppDispatch();
 
